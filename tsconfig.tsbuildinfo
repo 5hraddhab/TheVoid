@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/data/demouniverse.ts","./src/engine/celestialuniverse.tsx","./src/engine/proceduraltextures.ts","./src/types/universe.ts"],"version":"5.6.3"}

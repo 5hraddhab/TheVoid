@@ -1,0 +1,38 @@
+{
+  "name": "the-void",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"magenta.bold,cyan.bold\" \"npm run server\" \"npm run client\"",
+    "dev:all": "npm run dev",
+    "client": "vite",
+    "server": "tsx watch server/src/index.ts",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@google/genai": "^2.30.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.171.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/three": "^0.171.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^10.0.6",
+    "tsx": "^4.23.15",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.1"
+  }
+}
