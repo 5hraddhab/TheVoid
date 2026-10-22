@@ -155,7 +155,7 @@ function App() {
         setApiError({
           message:
             err.message ||
-            'Unable to connect to the universe generator backend. Please verify that the backend server is running on port 3001 and your GEMINI_API_KEY is configured.',
+            'Unable to connect to the universe generator backend. Please verify that the backend server is running on port 3001 and your GROK_API_KEY is configured.',
         });
       } finally {
         setIsGenerating(false);
@@ -224,9 +224,9 @@ function App() {
         </div>
 
         <div className="top-status">
-          {healthInfo?.geminiConfigured ? (
+          {healthInfo?.aiConfigured || healthInfo?.geminiConfigured ? (
             <span className="provenance-badge badge-ai">
-              <span className="live-dot" /> GEMINI HOSTED ENGINE READY
+              <span className="live-dot" /> GROK HOSTED ENGINE READY
             </span>
           ) : (
             <span className="provenance-badge badge-demo">
@@ -364,7 +364,7 @@ function App() {
             <div className="coordinates">
               {blueprint.isAiGenerated ? (
                 <span className="provenance-badge badge-ai">
-                  <Sparkles size={11} /> AI ARCHITECTED ({blueprint.modelUsed || 'Gemini'})
+                  <Sparkles size={11} /> AI ARCHITECTED ({blueprint.modelUsed || 'Grok'})
                 </span>
               ) : (
                 <span className="provenance-badge badge-demo">
@@ -505,10 +505,10 @@ function App() {
               <div>
                 <Sparkles size={16} />
                 <strong>VOID AI — UNIVERSE ARCHITECT</strong>
-                <span> / GOOGLE GEMINI POWERED</span>
+                <span> / GROK AI POWERED</span>
               </div>
               <span className="beta-tag">
-                {healthInfo?.model || 'GEMINI 2.5 FLASH'}
+                {healthInfo?.model || 'GROK ENGINE'}
               </span>
             </div>
 
@@ -562,7 +562,7 @@ function App() {
               <div className="generator-loading">
                 <div className="spinning-radar" />
                 <span>
-                  Querying Google Gemini hosted API & synthesizing 3D astrophysical
+                  Querying Grok AI hosted API & synthesizing 3D astrophysical
                   blueprint...
                 </span>
               </div>
@@ -593,12 +593,12 @@ function App() {
               <span>
                 <span className="tiny-dot" />{' '}
                 {isGenerating
-                  ? 'TRANSMITTING TO GEMINI API...'
+                  ? 'TRANSMITTING TO GROK API...'
                   : blueprint.isAiGenerated
                   ? `ARCHITECTED VIA ${blueprint.modelUsed}`
                   : 'EXPLORING BUILT-IN SPECIMEN'}
               </span>
-              <span>ENGINE V.0.3 // STRICT ZOD VALIDATED BLUEPRINT</span>
+              <span>ENGINE V.0.4 // STRICT ZOD VALIDATED BLUEPRINT</span>
             </div>
           </div>
 
@@ -778,7 +778,7 @@ function App() {
             <div>
               <strong>PROCEDURAL OBSERVER</strong>
               <p>
-                Every universe generated with Gemini constructs real 3D entities in
+                Every universe generated with Grok constructs real 3D entities in
                 Three.js with orbital physics.
               </p>
             </div>
@@ -799,7 +799,7 @@ function App() {
       <footer className="footer">
         <span>THE VOID © 2025–26 — AI UNIVERSE SIMULATOR</span>
         <span>
-          HOSTED AI PROVIDER: GOOGLE GEMINI{' '}
+          HOSTED AI PROVIDER: GROK AI{' '}
           <span className="footer-star">✳</span>
         </span>
         <span>NOTHING IS FIXED. EVERYTHING IS POSSIBLE.</span>

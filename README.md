@@ -1,11 +1,11 @@
 # THE VOID — AI-Powered Procedural Universe Simulator
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com)
-[![AI Engine](https://img.shields.io/badge/AI_Engine-Google_Gemini-8b70d6)](https://aistudio.google.com/)
-[![Graphics](https://img.shields.io/badge/3D_Engine-Three.js-55e8d1)](https://threejs.org/)
+[![AI Engine](https://img.shields.io/badge/AI_Engine-Grok_AI-55e8d1)](https://groq.com/)
+[![Graphics](https://img.shields.io/badge/3D_Engine-Three.js-8b70d6)](https://threejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-An interactive, AI-powered procedural 3D universe simulator built with React, TypeScript, Three.js, Express, Zod, and the official Google Gen AI SDK.
+An interactive, AI-powered procedural 3D universe simulator built with React, TypeScript, Three.js, Express, Zod, and the ultra-fast Grok engine.
 
 Describe any cosmic concept in natural language, and **VOID AI — Universe Architect** generates an astrophysical 3D reality rendered in real time. Fly through your universe in first-person flight mode, orbit black holes, inspect habitable worlds, scan spatial anomalies, and complete sector mission objectives.
 
@@ -13,7 +13,7 @@ Describe any cosmic concept in natural language, and **VOID AI — Universe Arch
 
 ## Features
 
-- **VOID AI — Universe Architect**: Powered by the official Google Gen AI SDK (`@google/genai`). Generates structured, Zod-validated 3D universe blueprints from natural language prompts.
+- **VOID AI — Universe Architect**: Powered by Grok high-performance inference engine. Generates structured, Zod-validated 3D universe blueprints from natural language prompts in milliseconds.
 - **Dynamic Three.js Cosmic Engine**:
   - **Stars**: Coronas, relativistic point lights, flares, and equator energy rings.
   - **Black Holes**: Pitch-black event horizons, photon spheres, and relativistic swirling accretion disks.
@@ -47,7 +47,7 @@ Describe any cosmic concept in natural language, and **VOID AI — Universe Arch
 
 - **Node.js**: v20.0.0 or higher recommended (compatible with Node 18+)
 - **npm**: v9.0.0 or higher
-- **Google Gemini API Key**: Free API key from [Google AI Studio](https://aistudio.google.com/)
+- **Grok / Groq API Key**
 
 ---
 
@@ -67,20 +67,20 @@ Create a `.env` file in the project root (a `.env.example` template is provided)
 cp .env.example .env
 ```
 
-Open `.env` and insert your Gemini API key:
+Open `.env` and insert your API key:
 
 ```env
 # Backend Server Port
 PORT=3001
 
-# Google Gemini API Key from https://aistudio.google.com/
-GEMINI_API_KEY=your_actual_gemini_api_key_here
+# Grok / Groq API Key
+GROK_API_KEY=your_actual_api_key_here
 
-# Recommended Gemini model (free tier supported)
-GEMINI_MODEL=gemini-2.5-flash
+# AI Model Selection (default: openai/gpt-oss-120b)
+AI_MODEL=openai/gpt-oss-120b
 ```
 
-> **Security Note**: `GEMINI_API_KEY` is loaded exclusively on the backend server. It is never bundled into frontend assets or exposed in client requests. `.env` is ignored by Git.
+> **Security Note**: `GROK_API_KEY` is loaded exclusively on the backend server. It is never bundled into frontend assets or exposed in client requests. `.env` is ignored by Git.
 
 ### 3. Start the Full-Stack Application
 
@@ -123,7 +123,7 @@ npm run preview
    - *"Create a dark universe with unstable stars and mysterious anomalies."*
    - *"Build a scientifically inspired solar system with moons and orbital motion."*
 4. Click **GENERATE UNIVERSE ↗**.
-5. The backend requests structured JSON from Gemini, validates the blueprint with Zod, and streams the celestial schema to Three.js.
+5. The backend requests structured JSON from Grok, validates the blueprint with Zod, and streams the celestial schema to Three.js in milliseconds.
 6. The 3D viewport smoothly cleans up previous assets and synthesizes the new stellar system, planets, black holes, and particle nebulae.
 7. Click the canvas to fly through and explore your generated cosmos!
 
@@ -137,10 +137,11 @@ Returns service status, model configuration, and secret-safe health checks.
   ```json
   {
     "status": "healthy",
-    "geminiConfigured": true,
-    "model": "gemini-2.5-flash",
+    "aiConfigured": true,
+    "provider": "Grok Engine",
+    "model": "openai/gpt-oss-120b",
     "timestamp": "2026-10-22T13:22:46.583Z",
-    "version": "0.3.0"
+    "version": "0.4.0"
   }
   ```
 
@@ -157,14 +158,14 @@ Generates a universe blueprint from a natural language prompt.
   ```
 - **Validation**:
   - Prompt must be a string between 3 and 600 characters.
-  - Rate limited to 20 requests/minute per IP.
+  - Rate limited to 30 requests/minute per IP.
 - **Response**:
   ```json
   {
     "success": true,
     "blueprint": {
       "id": "cosmos-1730000000000",
-      "name": "Bipolar Solaria",
+      "name": "Twin Suns of the Crimson Void",
       "description": "A dual stellar nexus orbiting a Kerr singularity.",
       "realityClass": "SINGULARITY",
       "lore": "Deep space probe telemetry indicates stable harmonic resonance.",
@@ -179,7 +180,7 @@ Generates a universe blueprint from a natural language prompt.
       "pointsOfInterest": [ ... ],
       "missionObjectives": [ ... ],
       "isAiGenerated": true,
-      "modelUsed": "Google Gemini (gemini-2.5-flash)"
+      "modelUsed": "Grok Engine (openai/gpt-oss-120b)"
     }
   }
   ```
@@ -188,23 +189,18 @@ Generates a universe blueprint from a natural language prompt.
 
 ## Troubleshooting
 
-### 1. "Gemini API key is not configured"
+### 1. "AI API key is not configured"
 - Ensure `.env` exists in the root directory.
-- Verify that `GEMINI_API_KEY` contains a valid key from [Google AI Studio](https://aistudio.google.com/).
+- Verify that `GROK_API_KEY` or `GROQ_API_KEY` contains your API key.
 - Restart the backend (`npm run dev`).
 - If you don't have an API key right now, click the **DEMO** button in the UI or **LOAD BUILT-IN DEMO UNIVERSE** to explore the handcrafted universe with full flight mode and 3D features.
 
-### 2. "Gemini API quota exhausted or rate limit reached (HTTP 429)"
-- Gemini free tier keys have requests-per-minute (RPM) and requests-per-day (RPD) limits.
-- Wait 60 seconds before generating another universe.
-- Check quota usage in the [Google Cloud / AI Studio Console](https://aistudio.google.com/).
-
-### 3. "Cannot connect to backend / Network Error"
+### 2. "Cannot connect to backend / Network Error"
 - Make sure the backend is running (`npm run server` or `npm run dev`).
 - Verify that port 3001 is available. You can change `PORT=3002` in `.env` and update the proxy target in `vite.config.ts` if 3001 is in use.
 
-### 4. CORS Errors in Development
-- The backend Express app includes CORS configured for `http://localhost:5173` and `http://localhost:3000`.
+### 3. CORS Errors in Development
+- The backend Express app includes CORS configured for `http://localhost:5173`, `http://localhost:5174`, and `http://localhost:3000`.
 - Vite also proxies `/api` requests directly to `http://localhost:3001` to eliminate cross-origin restrictions in local dev.
 
 ---
@@ -213,5 +209,5 @@ Generates a universe blueprint from a natural language prompt.
 
 - **Frontend**: React 18, TypeScript, Three.js, Lucide Icons, Vite
 - **Backend**: Node.js, Express, TypeScript (`tsx`), Zod, CORS, dotenv, express-rate-limit
-- **AI SDK**: Official Google Gen AI SDK (`@google/genai`)
-- **Procedural Generation**: Custom canvas shaders, Perlin-inspired procedural planetary surface generators, dynamic particle nebulae, and Keplerian orbital paths
+- **AI Engine**: Grok / Groq high-speed inference engine
+- **Procedural Generation**: Custom canvas shaders, procedural planetary surface generators, dynamic particle nebulae, and Keplerian orbital paths

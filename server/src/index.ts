@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
-import { generateUniverseWithGemini } from './gemini';
+import { generateUniverseWithGrok } from './grok';
 import { BUILT_IN_DEMO_UNIVERSE } from './demoUniverse';
 import type { HealthResponse, GenerateUniverseResponse } from '../../src/types/universe';
 
@@ -18,6 +18,8 @@ app.use(
     origin: [
       'http://localhost:5173',
       'http://127.0.0.1:5173',
+      'http://localhost:5174',
+      'http://127.0.0.1:5174',
       'http://localhost:3000',
       'http://127.0.0.1:3000',
     ],
@@ -28,35 +30,57 @@ app.use(
 
 app.use(express.json({ limit: '1mb' }));
 
-// Rate limiter for generation endpoint (20 requests per 60 seconds per IP to protect Gemini quotas)
+// Rate limiter for generation endpoint
 const generateLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 20,
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     success: false,
-    message: 'Too many universe generation requests. Please wait a minute before generating another universe.',
+    message: 'Too many universe generation requests. Please wait a moment before generating another universe.',
   },
 });
 
+// Helper to check key status
+function getAiConfig() {
+  const apiKey = (
+    process.env.GROQ_API_KEY ||
+    process.env.GROK_API_KEY ||
+    process.env.XAI_API_KEY ||
+    ''
+  ).trim();
+
+  const isXai = apiKey.startsWith('xai-');
+  const configured = apiKey.length > 0;
+  const model =
+    process.env.AI_MODEL ||
+    process.env.GROQ_MODEL ||
+    process.env.GROK_MODEL ||
+    (isXai ? 'grok-4.7' : 'openai/gpt-oss-120b');
+  const provider = isXai ? 'xAI Grok' : 'Grok Engine';
+
+  return { configured, model, provider };
+}
+
 // Health check endpoint (does NOT expose secrets)
 app.get('/api/health', (_req, res) => {
-  const geminiConfigured = Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 0);
-  const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+  const { configured, model, provider } = getAiConfig();
 
   const healthData: HealthResponse = {
     status: 'healthy',
-    geminiConfigured,
+    geminiConfigured: configured, // backwards-compatible flag
+    aiConfigured: configured,
+    provider,
     model,
     timestamp: new Date().toISOString(),
-    version: '0.3.0',
+    version: '0.4.0',
   };
 
   res.json(healthData);
 });
 
-// Built-in verified demo universe endpoint (instant, offline-capable, clearly labeled non-AI)
+// Built-in verified demo universe endpoint (instant, offline-capable)
 app.get('/api/demo-universe', (_req, res) => {
   res.json({
     success: true,
@@ -94,7 +118,7 @@ app.post('/api/generate-universe', generateLimiter, async (req, res) => {
     }
 
     console.log(`[Universe Generator] Processing prompt: "${trimmedPrompt.slice(0, 80)}..."`);
-    const blueprint = await generateUniverseWithGemini(trimmedPrompt);
+    const blueprint = await generateUniverseWithGrok(trimmedPrompt);
 
     const responsePayload: GenerateUniverseResponse = {
       success: true,
@@ -119,10 +143,12 @@ app.post('/api/generate-universe', generateLimiter, async (req, res) => {
 
 // Start Express server
 const server = app.listen(PORT, () => {
+  const { configured, model, provider } = getAiConfig();
   console.log(`\n🌌 THE VOID — Backend Server Online`);
   console.log(`📡 URL: http://localhost:${PORT}`);
-  console.log(`🔑 Gemini Configured: ${Boolean(process.env.GEMINI_API_KEY?.trim()) ? 'YES' : 'NO (Add GEMINI_API_KEY to .env)'}`);
-  console.log(`🎯 Default Model: ${process.env.GEMINI_MODEL || 'gemini-2.5-flash'}\n`);
+  console.log(`⚡ Engine: ${provider}`);
+  console.log(`🔑 AI Configured: ${configured ? 'YES' : 'NO (Add GROK_API_KEY to .env)'}`);
+  console.log(`🎯 Default Model: ${model}\n`);
 });
 
 export default app;

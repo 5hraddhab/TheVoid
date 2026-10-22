@@ -187,7 +187,9 @@ export interface GenerateUniverseResponse {
 
 export interface HealthResponse {
   status: 'healthy' | 'degraded';
-  geminiConfigured: boolean;
+  geminiConfigured?: boolean;
+  aiConfigured?: boolean;
+  provider?: string;
   model: string;
   timestamp: string;
   version: string;
