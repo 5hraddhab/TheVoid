@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { generateUniverseWithGrok } from './grok';
 import { BUILT_IN_DEMO_UNIVERSE } from './demoUniverse';
 import type { HealthResponse, GenerateUniverseResponse } from '../../src/types/universe';
@@ -9,20 +12,21 @@ import type { HealthResponse, GenerateUniverseResponse } from '../../src/types/u
 // Load environment variables from .env
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.resolve(__dirname, '../../dist');
+
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 
-// CORS configuration for local frontend development
+// CORS configuration (allow local dev ports as well as production deployed domains)
 app.use(
   cors({
-    origin: [
-      'http://localhost:5173',
-      'http://127.0.0.1:5173',
-      'http://localhost:5174',
-      'http://127.0.0.1:5174',
-      'http://localhost:3000',
-      'http://127.0.0.1:3000',
-    ],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, same-origin)
+      if (!origin) return callback(null, true);
+      return callback(null, true);
+    },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -141,11 +145,25 @@ app.post('/api/generate-universe', generateLimiter, async (req, res) => {
   }
 });
 
-// Start Express server
-const server = app.listen(PORT, () => {
+// Serve frontend static build if dist folder exists (Production Full-Stack Mode)
+if (fs.existsSync(distPath)) {
+  console.log(`📦 Serving production static assets from ${distPath}`);
+  app.use(express.static(distPath));
+
+  // Express 5 compatible SPA fallback
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api')) {
+      return res.sendFile(path.join(distPath, 'index.html'));
+    }
+    next();
+  });
+}
+
+// Start Express server on 0.0.0.0
+const server = app.listen(PORT, '0.0.0.0', () => {
   const { configured, model, provider } = getAiConfig();
   console.log(`\n🌌 THE VOID — Backend Server Online`);
-  console.log(`📡 URL: http://localhost:${PORT}`);
+  console.log(`📡 URL: http://0.0.0.0:${PORT}`);
   console.log(`⚡ Engine: ${provider}`);
   console.log(`🔑 AI Configured: ${configured ? 'YES' : 'NO (Add GROK_API_KEY to .env)'}`);
   console.log(`🎯 Default Model: ${model}\n`);

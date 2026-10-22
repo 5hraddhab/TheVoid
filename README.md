@@ -108,8 +108,30 @@ npm run client
 
 ```bash
 npm run build
-npm run preview
+npm start
 ```
+
+---
+
+## 🚀 1-Click Deployment to Render
+
+THE VOID is configured as a full-stack, single-service web application ready for instant deployment on [Render](https://render.com).
+
+### Method A: Connect via Render Dashboard (Fastest)
+
+1. Go to [dashboard.render.com](https://dashboard.render.com/) and click **New +** → **Web Service**.
+2. Connect your GitHub repository: `https://github.com/5hraddhab/TheVoid`.
+3. Configure the following settings:
+   - **Name**: `the-void` (or your preferred name)
+   - **Language / Runtime**: `Node`
+   - **Branch**: `main`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+4. Under **Environment Variables**, add:
+   - `GROK_API_KEY`: `your_grok_or_groq_api_key_here`
+   - `AI_MODEL`: `openai/gpt-oss-120b` (or leave default)
+   - `NODE_ENV`: `production`
+5. Click **Create Web Service**. Render will install, build the Vite 3D frontend, bundle the static assets, and launch the Express backend with live AI generation on a free `.onrender.com` URL!
 
 ---
 
